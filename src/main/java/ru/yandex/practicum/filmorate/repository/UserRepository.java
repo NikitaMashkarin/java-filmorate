@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class UserRepository {
-    private final static Logger log = LoggerFactory.getLogger(UserRepository.class);
+    private final Logger log = LoggerFactory.getLogger(UserRepository.class);
     private final Map<Long, User> users = new HashMap<>();
 
     public void update(User user) {

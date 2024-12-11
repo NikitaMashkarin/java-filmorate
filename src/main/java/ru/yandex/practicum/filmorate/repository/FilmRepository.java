@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FilmRepository {
-    private final static Logger log = LoggerFactory.getLogger(FilmRepository.class);
+    private final Logger log = LoggerFactory.getLogger(FilmRepository.class);
     private final Map<Long, Film> films = new HashMap<>();
 
     public void update(Film newFilm) {
