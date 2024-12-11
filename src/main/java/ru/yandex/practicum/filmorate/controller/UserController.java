@@ -13,9 +13,9 @@ import java.util.Collection;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    private final static Logger log = LoggerFactory.getLogger(UserController.class);
-    ValidationService validate = new ValidateService();
-    UserRepository repository = new UserRepository();
+    private final Logger log = LoggerFactory.getLogger(UserController.class);
+    private final ValidationService validate = new ValidateService();
+    private final UserRepository repository = new UserRepository();
 
     @GetMapping
     public Collection<User> findAll() {

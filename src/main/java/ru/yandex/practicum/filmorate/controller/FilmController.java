@@ -13,9 +13,9 @@ import java.util.Collection;
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-    ValidationService validate = new ValidateService();
-    FilmRepository repository = new FilmRepository();
-    private final static Logger log = LoggerFactory.getLogger(FilmController.class);
+    private final ValidationService validate = new ValidateService();
+    private final FilmRepository repository = new FilmRepository();
+    private final Logger log = LoggerFactory.getLogger(FilmController.class);
 
     @GetMapping
     public Collection<Film> findAll() {
