@@ -27,21 +27,21 @@ public class Film {
     @JsonSerialize(using = CustomDurationSerializer.class)
     @JsonDeserialize(using = CustomDurationDeserializer.class)
     private Duration duration;
-}
 
-class CustomDurationDeserializer extends JsonDeserializer<Duration> {
-    @Override
-    public Duration deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
-        int minutes = p.getIntValue();
-        return Duration.ofMinutes(minutes);
+    private static class CustomDurationDeserializer extends JsonDeserializer<Duration> {
+        @Override
+        public Duration deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+            int minutes = p.getIntValue();
+            return Duration.ofMinutes(minutes);
+        }
     }
-}
 
-class CustomDurationSerializer extends JsonSerializer<Duration> {
+    private static class CustomDurationSerializer extends JsonSerializer<Duration> {
 
-    @Override
-    public void serialize(Duration duration, JsonGenerator gen, com.fasterxml.jackson.databind.SerializerProvider serializers) throws IOException {
-        long minutes = duration.toMinutes();
-        gen.writeNumber(minutes);
+        @Override
+        public void serialize(Duration duration, JsonGenerator gen, com.fasterxml.jackson.databind.SerializerProvider serializers) throws IOException {
+            long minutes = duration.toMinutes();
+            gen.writeNumber(minutes);
+        }
     }
 }
