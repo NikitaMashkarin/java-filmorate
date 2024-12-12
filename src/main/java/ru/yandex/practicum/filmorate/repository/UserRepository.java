@@ -19,8 +19,8 @@ public class UserRepository {
             oldUser.setLogin(user.getLogin());
             oldUser.setBirthday(user.getBirthday());
             oldUser.setEmail(user.getEmail());
-            if (oldUser.getName().isEmpty()) {
-                oldUser.setName(user.getName());
+            if (user.getName() == null) {
+                oldUser.setName(user.getLogin());
             }
         } else {
             log.warn("Фильм с id: {} - не найден", user.getId());
@@ -30,6 +30,9 @@ public class UserRepository {
 
     public void save(User user) {
         user.setId(getNextId());
+        if (user.getName() == null) {
+            user.setName(user.getLogin());
+        }
         users.put(user.getId(), user);
     }
 
