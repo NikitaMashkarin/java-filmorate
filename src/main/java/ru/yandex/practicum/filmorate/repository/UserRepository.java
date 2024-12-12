@@ -21,6 +21,8 @@ public class UserRepository {
             oldUser.setEmail(user.getEmail());
             if (user.getName() == null) {
                 oldUser.setName(user.getLogin());
+            } else {
+                oldUser.setName(user.getName());
             }
         } else {
             log.warn("Фильм с id: {} - не найден", user.getId());

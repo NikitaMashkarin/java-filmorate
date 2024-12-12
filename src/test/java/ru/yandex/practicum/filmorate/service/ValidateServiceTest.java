@@ -1,9 +1,12 @@
 package ru.yandex.practicum.filmorate.service;
 
+import org.junit.jupiter.api.Test;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.repository.UserRepository;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDate;
 
@@ -12,7 +15,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class ValidateServiceTest {
     private final ValidationService validationService = new ValidateService();
 
-    public void theNameCannotBeEmpty() {
+    @Test
+    public void theNameCannotBeEmpty() throws IOException {
         Film film = new Film();
         film.setDescription("test");
         film.setDuration(Duration.ofMinutes(15));
@@ -22,7 +26,8 @@ class ValidateServiceTest {
         assertThrows(RuntimeException.class, () -> validationService.validateUpdate(film));
     }
 
-    public void theMaximumLengthOfTheDescriptionIs200Characters() {
+    @Test
+    public void theMaximumLengthOfTheDescriptionIs200Characters() throws IOException {
         Film film = new Film();
         film.setName("test");
         film.setDescription("testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest" +
@@ -37,7 +42,8 @@ class ValidateServiceTest {
         assertThrows(RuntimeException.class, () -> validationService.validateUpdate(film));
     }
 
-    public void theReleaseDateIsNotEarlierThan12_28_1895() {
+    @Test
+    public void theReleaseDateIsNotEarlierThan12_28_1895() throws IOException {
         Film film = new Film();
         film.setName("test");
         film.setDescription("test");
@@ -48,7 +54,8 @@ class ValidateServiceTest {
         assertThrows(RuntimeException.class, () -> validationService.validateUpdate(film));
     }
 
-    public void theDurationOfTheMovieMustBeAPositiveNumber() {
+    @Test
+    public void theDurationOfTheMovieMustBeAPositiveNumber() throws IOException {
         Film film = new Film();
         film.setName("test");
         film.setDescription("test");
@@ -59,14 +66,8 @@ class ValidateServiceTest {
         assertThrows(RuntimeException.class, () -> validationService.validateUpdate(film));
     }
 
-    //    User {
-//        private Long id;
-//        private String email;
-//        private String login;
-//        private String name;
-//        private LocalDate birthday;
-//    }
-    public void anEmailCannotBeEmpty() {
+    @Test
+    public void anEmailCannotBeEmpty() throws IOException {
         User user = new User();
         user.setId((long) 1);
         user.setName("test");
@@ -76,7 +77,8 @@ class ValidateServiceTest {
         assertThrows(RuntimeException.class, () -> validationService.validateUpdate(user));
     }
 
-    public void theEmailMustContainTheSymbolDog() {
+    @Test
+    public void theEmailMustContainTheSymbolDog() throws IOException {
         User user = new User();
         user.setEmail("test");
         user.setId((long) 1);
@@ -87,7 +89,8 @@ class ValidateServiceTest {
         assertThrows(RuntimeException.class, () -> validationService.validateUpdate(user));
     }
 
-    public void theLoginCannotBeEmpty() {
+    @Test
+    public void theLoginCannotBeEmpty() throws IOException {
         User user = new User();
         user.setEmail("test");
         user.setId((long) 1);
@@ -97,7 +100,8 @@ class ValidateServiceTest {
         assertThrows(RuntimeException.class, () -> validationService.validateUpdate(user));
     }
 
-    public void theLoginCannotContainSpaces() {
+    @Test
+    public void theLoginCannotContainSpaces() throws IOException {
         User user = new User();
         user.setEmail("test");
         user.setId((long) 1);
@@ -108,7 +112,8 @@ class ValidateServiceTest {
         assertThrows(RuntimeException.class, () -> validationService.validateUpdate(user));
     }
 
-    public void theNameToDisplayMayBeEmpty() {
+    @Test
+    public void theNameToDisplayMayBeEmpty() throws IOException {
         UserRepository repository = new UserRepository();
         User user = new User();
         user.setEmail("test");
@@ -119,7 +124,8 @@ class ValidateServiceTest {
         assertEquals(repository.getById(user.getId()).getName(), "test@test");
     }
 
-    public void theDateOfBirthCannotBeInTheFuture() {
+    @Test
+    public void theDateOfBirthCannotBeInTheFuture() throws IOException {
         User user = new User();
         user.setEmail("test");
         user.setId((long) 1);
