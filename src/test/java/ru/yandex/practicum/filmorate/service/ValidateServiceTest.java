@@ -12,7 +12,7 @@ import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ValidateServiceTest {
-    private final ValidationService validationService = new ValidateService();
+    private final ValidationService validationService = new ValidationServiceImpl();
 
     @Test
     public void theNameCannotBeEmpty() throws IOException {
