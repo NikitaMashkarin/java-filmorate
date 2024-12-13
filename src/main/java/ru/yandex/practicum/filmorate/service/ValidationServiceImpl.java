@@ -8,7 +8,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import java.time.LocalDate;
 
 @Slf4j
-public class ValidationServiceImpl implements ValidationService{
+public class ValidationServiceImpl implements ValidationService {
     @Override
     public void validateCreate(Film newFilm) {
         if (newFilm.getName() == null || newFilm.getName().isBlank()) {
@@ -60,7 +60,8 @@ public class ValidationServiceImpl implements ValidationService{
         }
         validateCreate(newUser);
     }
-    private boolean isCharUniqueInString(String str, String ch){
+
+    private boolean isCharUniqueInString(String str, String ch) {
         return str.indexOf(ch) == str.lastIndexOf(ch);
     }
 }
