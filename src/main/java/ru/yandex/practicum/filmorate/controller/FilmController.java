@@ -1,21 +1,20 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.repository.FilmRepository;
-import ru.yandex.practicum.filmorate.service.ValidateService;
 import ru.yandex.practicum.filmorate.service.ValidationService;
+import ru.yandex.practicum.filmorate.service.ValidationServiceImpl;
 
 import java.util.Collection;
 
+@Slf4j
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-    private final ValidationService validate = new ValidateService();
+    private final ValidationService validate = new ValidationServiceImpl();
     private final FilmRepository repository = new FilmRepository();
-    private final Logger log = LoggerFactory.getLogger(FilmController.class);
 
     @GetMapping
     public Collection<Film> findAll() {

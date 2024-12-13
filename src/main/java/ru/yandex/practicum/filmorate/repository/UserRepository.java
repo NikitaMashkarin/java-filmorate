@@ -1,16 +1,13 @@
 package ru.yandex.practicum.filmorate.repository;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
+@Slf4j
 public class UserRepository {
-    private final Logger log = LoggerFactory.getLogger(UserRepository.class);
     private final Map<Long, User> users = new HashMap<>();
 
     public void update(User user) {
@@ -38,8 +35,8 @@ public class UserRepository {
         users.put(user.getId(), user);
     }
 
-    public Collection<User> getAll() {
-        return users.values();
+    public List<User> getAll() {
+        return new ArrayList<>(users.values());
     }
 
     public User getById(long id) {

@@ -1,31 +1,29 @@
 package ru.yandex.practicum.filmorate.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
 
-public class ValidateService implements ValidationService {
-    private final Logger log = LoggerFactory.getLogger(ValidateService.class);
-
+@Slf4j
+public class ValidationServiceImpl implements ValidationService{
     @Override
     public void validateCreate(Film newFilm) {
         if (newFilm.getName() == null || newFilm.getName().isBlank()) {
             throw new ValidationException("Название не может быть пустым");
         }
 
-        if (newFilm.getDescription().length() > 200) {
+        if (newFilm.getDescription() == null || newFilm.getDescription().length() > 200) {
             throw new ValidationException("Максимальная длина описания — 200 символов");
         }
 
-        if (newFilm.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
+        if (newFilm.getReleaseDate() == null || newFilm.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
             throw new ValidationException("Дата релиза — не раньше 28 декабря 1895 года");
         }
 
-        if (newFilm.getDuration().toMinutes() < 0) {
+        if (newFilm.getDuration() == null || newFilm.getDuration().toMinutes() < 0) {
             throw new ValidationException("Продолжительность фильма должна быть положительным числом");
         }
         log.debug("Валидация фильма пройдена");
@@ -41,7 +39,7 @@ public class ValidateService implements ValidationService {
 
     @Override
     public void validateCreate(User newUser) {
-        if (newUser.getEmail().isBlank() || !(newUser.getEmail().contains("@"))) {
+        if (newUser.getEmail() == null || !(newUser.getEmail().contains("@")) || isCharUniqueInString(newUser.getEmail(), "@")) {
             throw new ValidationException("Электронная почта не может быть пустой и должна содержать символ @");
         }
 
@@ -62,4 +60,9 @@ public class ValidateService implements ValidationService {
         }
         validateCreate(newUser);
     }
+    private boolean isCharUniqueInString(String str, String ch){
+        return str.indexOf(ch) == str.lastIndexOf(ch);
+    }
 }
+
+
