@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.dataСonversion;
+package ru.yandex.practicum.filmorate.data_conversion;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
