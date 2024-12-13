@@ -39,7 +39,7 @@ public class ValidationServiceImpl implements ValidationService {
 
     @Override
     public void validateCreate(User newUser) {
-        if (newUser.getEmail() == null || !(newUser.getEmail().contains("@")) || isCharUniqueInString(newUser.getEmail(), "@")) {
+        if (newUser.getEmail() == null || !(newUser.getEmail().contains("@")) || !(isCharUniqueInString(newUser.getEmail(), "@"))) {
             throw new ValidationException("Электронная почта не может быть пустой и должна содержать символ @");
         }
 
