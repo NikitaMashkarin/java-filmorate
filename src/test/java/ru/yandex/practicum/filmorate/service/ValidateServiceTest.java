@@ -12,7 +12,8 @@ import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ValidateServiceTest {
-    private final ValidationService validationService = new ValidationServiceImpl();
+    private final FilmService filmService = new FilmService();
+    private final UserService userService = new UserService();
 
     @Test
     public void theNameCannotBeEmpty() throws IOException {
@@ -21,8 +22,8 @@ class ValidateServiceTest {
         film.setDuration(Duration.ofMinutes(15));
         film.setReleaseDate(LocalDate.now());
         film.setId((long) 1);
-        assertThrows(RuntimeException.class, () -> validationService.validateCreate(film));
-        assertThrows(RuntimeException.class, () -> validationService.validateUpdate(film));
+        assertThrows(RuntimeException.class, () -> filmService.validateCreate(film));
+        assertThrows(RuntimeException.class, () -> filmService.validateUpdate(film));
     }
 
     @Test
@@ -37,8 +38,8 @@ class ValidateServiceTest {
         film.setDuration(Duration.ofMinutes(15));
         film.setReleaseDate(LocalDate.now());
         film.setId((long) 1);
-        assertThrows(RuntimeException.class, () -> validationService.validateCreate(film));
-        assertThrows(RuntimeException.class, () -> validationService.validateUpdate(film));
+        assertThrows(RuntimeException.class, () -> filmService.validateCreate(film));
+        assertThrows(RuntimeException.class, () -> filmService.validateUpdate(film));
     }
 
     @Test
@@ -49,8 +50,8 @@ class ValidateServiceTest {
         film.setDuration(Duration.ofMinutes(15));
         film.setReleaseDate(LocalDate.of(1800, 12, 21));
         film.setId((long) 1);
-        assertThrows(RuntimeException.class, () -> validationService.validateCreate(film));
-        assertThrows(RuntimeException.class, () -> validationService.validateUpdate(film));
+        assertThrows(RuntimeException.class, () -> filmService.validateCreate(film));
+        assertThrows(RuntimeException.class, () -> filmService.validateUpdate(film));
     }
 
     @Test
@@ -61,8 +62,8 @@ class ValidateServiceTest {
         film.setDuration(Duration.ofMinutes(-15));
         film.setReleaseDate(LocalDate.of(1800, 12, 21));
         film.setId((long) 1);
-        assertThrows(RuntimeException.class, () -> validationService.validateCreate(film));
-        assertThrows(RuntimeException.class, () -> validationService.validateUpdate(film));
+        assertThrows(RuntimeException.class, () -> filmService.validateCreate(film));
+        assertThrows(RuntimeException.class, () -> filmService.validateUpdate(film));
     }
 
     @Test
@@ -72,8 +73,8 @@ class ValidateServiceTest {
         user.setName("test");
         user.setLogin("test");
         user.setBirthday(LocalDate.of(2000, 1, 1));
-        assertThrows(RuntimeException.class, () -> validationService.validateCreate(user));
-        assertThrows(RuntimeException.class, () -> validationService.validateUpdate(user));
+        assertThrows(RuntimeException.class, () -> userService.validateCreate(user));
+        assertThrows(RuntimeException.class, () -> userService.validateUpdate(user));
     }
 
     @Test
@@ -84,8 +85,8 @@ class ValidateServiceTest {
         user.setName("test");
         user.setLogin("test");
         user.setBirthday(LocalDate.of(2000, 1, 1));
-        assertThrows(RuntimeException.class, () -> validationService.validateCreate(user));
-        assertThrows(RuntimeException.class, () -> validationService.validateUpdate(user));
+        assertThrows(RuntimeException.class, () -> userService.validateCreate(user));
+        assertThrows(RuntimeException.class, () -> userService.validateUpdate(user));
     }
 
     @Test
@@ -95,8 +96,8 @@ class ValidateServiceTest {
         user.setId((long) 1);
         user.setName("test");
         user.setBirthday(LocalDate.of(2000, 1, 1));
-        assertThrows(RuntimeException.class, () -> validationService.validateCreate(user));
-        assertThrows(RuntimeException.class, () -> validationService.validateUpdate(user));
+        assertThrows(RuntimeException.class, () -> userService.validateCreate(user));
+        assertThrows(RuntimeException.class, () -> userService.validateUpdate(user));
     }
 
     @Test
@@ -107,8 +108,8 @@ class ValidateServiceTest {
         user.setName("test");
         user.setLogin("test test");
         user.setBirthday(LocalDate.of(2000, 1, 1));
-        assertThrows(RuntimeException.class, () -> validationService.validateCreate(user));
-        assertThrows(RuntimeException.class, () -> validationService.validateUpdate(user));
+        assertThrows(RuntimeException.class, () -> userService.validateCreate(user));
+        assertThrows(RuntimeException.class, () -> userService.validateUpdate(user));
     }
 
     @Test
@@ -130,7 +131,7 @@ class ValidateServiceTest {
         user.setId((long) 1);
         user.setLogin("test@test");
         user.setBirthday(LocalDate.of(2025, 1, 1));
-        assertThrows(RuntimeException.class, () -> validationService.validateCreate(user));
-        assertThrows(RuntimeException.class, () -> validationService.validateUpdate(user));
+        assertThrows(RuntimeException.class, () -> userService.validateCreate(user));
+        assertThrows(RuntimeException.class, () -> userService.validateUpdate(user));
     }
 }
