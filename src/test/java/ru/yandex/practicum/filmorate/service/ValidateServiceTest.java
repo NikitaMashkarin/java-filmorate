@@ -3,7 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.repository.UserRepository;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -113,7 +113,7 @@ class ValidateServiceTest {
 
     @Test
     public void theNameToDisplayMayBeEmpty() throws IOException {
-        UserRepository repository = new UserRepository();
+        InMemoryUserStorage repository = new InMemoryUserStorage();
         User user = new User();
         user.setEmail("test");
         user.setId((long) 1);
