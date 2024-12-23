@@ -1,15 +1,18 @@
 package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.time.LocalDate;
+import java.util.*;
 
 @Slf4j
-public class ValidationServiceImpl implements ValidationService {
-    @Override
+@Service
+public class FilmService {
     public void validateCreate(Film newFilm) {
         if (newFilm.getName() == null || newFilm.getName().isBlank()) {
             throw new ValidationException("Название не может быть пустым");
@@ -29,7 +32,6 @@ public class ValidationServiceImpl implements ValidationService {
         log.debug("Валидация фильма пройдена");
     }
 
-    @Override
     public void validateUpdate(Film newFilm) {
         if (newFilm.getId() == null) {
             throw new ValidationException("Id должен быть указан");
@@ -37,33 +39,27 @@ public class ValidationServiceImpl implements ValidationService {
         validateCreate(newFilm);
     }
 
-    @Override
-    public void validateCreate(User newUser) {
-        if (newUser.getEmail() == null || !(newUser.getEmail().contains("@")) || !(isCharUniqueInString(newUser.getEmail(), "@"))) {
-            throw new ValidationException("Электронная почта не может быть пустой и должна содержать символ @");
-        }
-
-        if (newUser.getLogin().isBlank() || newUser.getLogin().contains(" ")) {
-            throw new ValidationException("Логин не может быть пустым и содержать пробелы");
-        }
-
-        if (newUser.getBirthday().isAfter(LocalDate.now())) {
-            throw new ValidationException("Дата рождения не может быть в будущем");
-        }
-        log.debug("Валидация пользователя пройдена");
+    public void addLike(Film film, User user){
+        film.getLikes().add(user.getId());
+        film.setQuantityLikes(film.getQuantityLikes() + 1);
     }
 
-    @Override
-    public void validateUpdate(User newUser) {
-        if (newUser.getId() == null) {
-            throw new ValidationException("Id должен быть указан");
-        }
-        validateCreate(newUser);
+    public void deleteLike(Film film, User user){
+        film.getLikes().remove(user.getId());
+        film.setQuantityLikes(film.getQuantityLikes() - 1);
     }
 
-    private boolean isCharUniqueInString(String str, String ch) {
-        return str.indexOf(ch) == str.lastIndexOf(ch);
+    public List<Film> find10Popular(FilmStorage filmStorage){
+        Set<Film> films = new TreeSet<>(filmStorage.getAll());
+        List<Film> filmList = new LinkedList<>();
+        int count = 0;
+        for (Film film : films) {
+            filmList.add(film);
+            count++;
+            if (count == 10) {
+                break;
+            }
+        }
+        return filmList;
     }
 }
-
-

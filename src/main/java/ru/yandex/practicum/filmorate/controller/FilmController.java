@@ -3,9 +3,8 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.repository.FilmRepository;
-import ru.yandex.practicum.filmorate.service.ValidationService;
-import ru.yandex.practicum.filmorate.service.ValidationServiceImpl;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 
 import java.util.Collection;
 
@@ -13,8 +12,8 @@ import java.util.Collection;
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-    private final ValidationService validate = new ValidationServiceImpl();
-    private final FilmRepository repository = new FilmRepository();
+    private final FilmService validate = new FilmService();
+    private final InMemoryFilmStorage repository = new InMemoryFilmStorage();
 
     @GetMapping
     public Collection<Film> findAll() {
