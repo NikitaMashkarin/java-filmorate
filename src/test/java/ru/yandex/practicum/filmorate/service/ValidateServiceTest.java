@@ -3,6 +3,8 @@ package ru.yandex.practicum.filmorate.service;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
 import java.io.IOException;
@@ -12,8 +14,8 @@ import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ValidateServiceTest {
-    private final FilmService filmService = new FilmService();
-    private final UserService userService = new UserService();
+    private final FilmService filmService = new FilmService(new InMemoryFilmStorage(), new InMemoryUserStorage());
+    private final UserService userService = new UserService(new InMemoryFilmStorage(), new InMemoryUserStorage());
 
     @Test
     public void theNameCannotBeEmpty() throws IOException {

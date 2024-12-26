@@ -2,10 +2,11 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -13,6 +14,14 @@ import java.util.*;
 @Slf4j
 @Service
 public class FilmService {
+    FilmStorage filmStorage;
+    UserStorage userStorage;
+
+    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
+        this.filmStorage = filmStorage;
+        this.userStorage = userStorage;
+    }
+
     public void validateCreate(Film newFilm) {
         if (newFilm.getName() == null || newFilm.getName().isBlank()) {
             throw new ValidationException("Название не может быть пустым");
@@ -39,27 +48,34 @@ public class FilmService {
         validateCreate(newFilm);
     }
 
-    public void addLike(Film film, User user){
-        film.getLikes().add(user.getId());
-        film.setQuantityLikes(film.getQuantityLikes() + 1);
+    public Film addLike(Long idUser, Long idFilm) {
+        if (filmStorage.getById(idFilm) == null) throw new NotFoundException("Фильм с ID " + idFilm + " не найден");
+
+        Film film = filmStorage.getById(idFilm);
+        film.getLikes().add(idUser);
+        return film;
     }
 
-    public void deleteLike(Film film, User user){
-        film.getLikes().remove(user.getId());
-        film.setQuantityLikes(film.getQuantityLikes() - 1);
+    public Film deleteLike(Long idUser, Long idFilm) {
+        if (filmStorage.getById(idFilm) == null) throw new NotFoundException("Фильм с ID " + idFilm + " не найден");
+        Film film = filmStorage.getById(idFilm);
+        film.getLikes().remove(idUser);
+        return film;
     }
 
-    public List<Film> find10Popular(FilmStorage filmStorage){
-        Set<Film> films = new TreeSet<>(filmStorage.getAll());
-        List<Film> filmList = new LinkedList<>();
-        int count = 0;
-        for (Film film : films) {
-            filmList.add(film);
-            count++;
-            if (count == 10) {
-                break;
-            }
-        }
-        return filmList;
+    public Collection<Film> findPopular(int count) {
+        Collection<Film> films;
+        films = sortingToDown().stream()
+                .limit(count)
+                .toList();
+        return films;
+    }
+
+    public List<Film> sortingToDown() {
+        ArrayList<Film> listFilms = new ArrayList<>(filmStorage.getAll());
+        listFilms.sort((Film film1, Film film2) ->
+                Integer.compare(film2.getLikes().size(), film1.getLikes().size())
+        );
+        return listFilms;
     }
 }

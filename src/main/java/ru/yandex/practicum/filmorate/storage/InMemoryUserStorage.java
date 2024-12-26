@@ -1,7 +1,9 @@
 package ru.yandex.practicum.filmorate.storage;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -9,7 +11,8 @@ import java.util.*;
 
 @Slf4j
 @Component
-public class InMemoryUserStorage implements UserStorage{
+@Getter
+public class InMemoryUserStorage implements UserStorage {
     private final Map<Long, User> users = new HashMap<>();
 
     public void update(User user) {
@@ -25,7 +28,7 @@ public class InMemoryUserStorage implements UserStorage{
             }
         } else {
             log.warn("Фильм с id: {} - не найден", user.getId());
-            throw new ValidationException("Фильм с указанным id не найден");
+            throw new NotFoundException("Фильм с указанным id не найден");
         }
     }
 

@@ -24,5 +24,8 @@ public class Film {
     @JsonDeserialize(using = CustomDurationDeserializer.class)
     private Duration duration;
     private final Set<Long> likes = new HashSet<>();
-    private int quantityLikes = 0;
+
+    public int getQuantityLikes() {
+        return likes.size();
+    }
 }

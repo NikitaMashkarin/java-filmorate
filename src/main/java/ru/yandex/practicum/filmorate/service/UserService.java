@@ -1,9 +1,14 @@
 package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -11,6 +16,14 @@ import java.util.*;
 @Slf4j
 @Service
 public class UserService {
+    FilmStorage filmStorage;
+    UserStorage userStorage;
+
+    public UserService(FilmStorage filmStorage, UserStorage userStorage) {
+        this.filmStorage = filmStorage;
+        this.userStorage = userStorage;
+    }
+
     public void validateCreate(User newUser) {
         if (newUser.getEmail() == null || !(newUser.getEmail().contains("@")) || !(isCharUniqueInString(newUser.getEmail(), "@"))) {
             throw new ValidationException("Электронная почта не может быть пустой и должна содержать символ @");
@@ -33,22 +46,32 @@ public class UserService {
         validateCreate(newUser);
     }
 
-    public void addFriend(User user1, User user2){
-        user1.getFriends().add(user2.getId());
-        user2.getFriends().add(user1.getId());
+    public User addFriend(Long id, Long friendId, InMemoryUserStorage userStorage) {
+        User user1 = userStorage.getById(id);
+        User user2 = userStorage.getById(friendId);
+        if (user2 == null || user1 == null) throw new NotFoundException("Пользователь не найден");
+        user1.getFriends().add(friendId);
+        user2.getFriends().add(id);
+        return user1;
     }
 
-    public void deleteFriend(User user1, User user2){
-        user1.getFriends().remove(user2.getId());
-        user2.getFriends().remove(user1.getId());
+    public User deleteFriend(Long id, Long friendId, InMemoryUserStorage userStorage) {
+        User user1 = userStorage.getById(id);
+        User user2 = userStorage.getById(friendId);
+        if (user2 == null || user1 == null) throw new NotFoundException("Пользователь не найден");
+        user1.getFriends().remove(friendId);
+        user2.getFriends().remove(id);
+        return user1;
     }
 
-    public List<Long> findMutualFriends(User user1, User user2){
-        Set<Long> friendsUser1 = user1.getFriends();
-        Set<Long> friendsUser2 = user2.getFriends();
+    public List<Long> findMutualFriends(Long id, Long friendId, InMemoryUserStorage userStorage) {
+        if (userStorage.getById(id) == null || userStorage.getById(friendId) == null)
+            throw new NotFoundException("Пользователь не найден");
+        Set<Long> friendsUser1 = userStorage.getById(id).getFriends();
+        Set<Long> friendsUser2 = userStorage.getById(friendId).getFriends();
         List<Long> mutualFriends = new ArrayList<>();
-        for(Long idFriend : friendsUser1){
-            if(friendsUser2.contains(idFriend)) mutualFriends.add(idFriend);
+        for (Long idFriend : friendsUser1) {
+            if (friendsUser2.contains(idFriend)) mutualFriends.add(idFriend);
         }
         return mutualFriends;
     }

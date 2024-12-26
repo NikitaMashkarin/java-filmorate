@@ -1,18 +1,19 @@
 package ru.yandex.practicum.filmorate.storage;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
 @Component
-public class InMemoryFilmStorage implements FilmStorage{
+@Getter
+public class InMemoryFilmStorage implements FilmStorage {
     private final Map<Long, Film> films = new HashMap<>();
 
     public void update(Film newFilm) {
@@ -24,7 +25,7 @@ public class InMemoryFilmStorage implements FilmStorage{
             oldFilm.setDuration(newFilm.getDuration());
         } else {
             log.warn("Фильм с id: {} - не найден", newFilm.getId());
-            throw new ValidationException("Фильм с указанным id не найден");
+            throw new NotFoundException("Фильм с указанным id не найден");
         }
     }
 
