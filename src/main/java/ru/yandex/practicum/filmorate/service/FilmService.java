@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -41,6 +42,10 @@ public class FilmService {
         log.debug("Валидация фильма пройдена");
     }
 
+    public Collection<Film> getAll() {
+        return filmStorage.getAll();
+    }
+
     public void validateUpdate(Film newFilm) {
         if (newFilm.getId() == null) {
             throw new ValidationException("Id должен быть указан");
@@ -50,7 +55,8 @@ public class FilmService {
 
     public Film addLike(Long idUser, Long idFilm) {
         if (filmStorage.getById(idFilm) == null) throw new NotFoundException("Фильм с ID " + idFilm + " не найден");
-
+        if (userStorage.getById(idUser) == null)
+            throw new NotFoundException("Пользователь с ID " + idUser + " не найден");
         Film film = filmStorage.getById(idFilm);
         film.getLikes().add(idUser);
         return film;
@@ -58,24 +64,22 @@ public class FilmService {
 
     public Film deleteLike(Long idUser, Long idFilm) {
         if (filmStorage.getById(idFilm) == null) throw new NotFoundException("Фильм с ID " + idFilm + " не найден");
+        if (userStorage.getById(idUser) == null)
+            throw new NotFoundException("Пользователь с ID " + idUser + " не найден");
         Film film = filmStorage.getById(idFilm);
         film.getLikes().remove(idUser);
         return film;
     }
 
     public Collection<Film> findPopular(int count) {
-        Collection<Film> films;
-        films = sortingToDown().stream()
+        return filmStorage.getAll().stream()
+                .sorted((film1, film2) -> {
+                    if (film2.getQuantityLikes().compareTo(film1.getQuantityLikes()) == 0) {
+                        return film1.getName().compareTo(film2.getName());
+                    }
+                    return film2.getQuantityLikes().compareTo(film1.getQuantityLikes());
+                })
                 .limit(count)
-                .toList();
-        return films;
-    }
-
-    public List<Film> sortingToDown() {
-        ArrayList<Film> listFilms = new ArrayList<>(filmStorage.getAll());
-        listFilms.sort((Film film1, Film film2) ->
-                Integer.compare(film2.getLikes().size(), film1.getLikes().size())
-        );
-        return listFilms;
+                .collect(Collectors.toList());
     }
 }

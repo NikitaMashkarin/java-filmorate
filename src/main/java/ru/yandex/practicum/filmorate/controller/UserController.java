@@ -24,13 +24,19 @@ public class UserController {
     }
 
     @GetMapping("/{id}/friends")
-    public Set<Long> findFriendsById(@PathVariable Long id) {
-        if (repository.getUsers().containsKey(id)) return repository.getById(id).getFriends();
+    public Collection<User> findFriendsById(@PathVariable Long id) {
+        if (repository.getUsers().containsKey(id)) {
+            Collection<User> friendsUser = new HashSet<>();
+            for (Long userId : repository.getById(id).getFriends()) {
+                friendsUser.add(repository.getById(userId));
+            }
+            return friendsUser;
+        }
         throw new NotFoundException("Пользователя с id " + id + " не существует");
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
-    public List<Long> findMutualFriends(@PathVariable Long id,
+    public List<User> findMutualFriends(@PathVariable Long id,
                                         @PathVariable Long otherId) {
         log.info("Общие друзья пользователя " + id + " и " + otherId);
         return service.findMutualFriends(id, otherId, repository);

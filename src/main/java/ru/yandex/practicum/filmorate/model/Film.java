@@ -25,7 +25,7 @@ public class Film {
     private Duration duration;
     private final Set<Long> likes = new HashSet<>();
 
-    public int getQuantityLikes() {
+    public Integer getQuantityLikes() {
         return likes.size();
     }
 }

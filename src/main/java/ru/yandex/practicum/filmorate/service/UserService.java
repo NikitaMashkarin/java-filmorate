@@ -24,15 +24,16 @@ public class UserService {
     }
 
     public void validateCreate(User newUser) {
-        if (newUser.getEmail() == null || !(newUser.getEmail().contains("@")) || !(isCharUniqueInString(newUser.getEmail(), "@"))) {
+        if (newUser == null) {
+            throw new ValidationException("Пользователь не может быть null");
+        }
+        if (newUser.getEmail() == null || !newUser.getEmail().contains("@") || !isCharUniqueInString(newUser.getEmail(), "@")) {
             throw new ValidationException("Электронная почта не может быть пустой и должна содержать символ @");
         }
-
-        if (newUser.getLogin().isBlank() || newUser.getLogin().contains(" ")) {
+        if (newUser.getLogin() == null || newUser.getLogin().isBlank() || newUser.getLogin().contains(" ")) {
             throw new ValidationException("Логин не может быть пустым и содержать пробелы");
         }
-
-        if (newUser.getBirthday().isAfter(LocalDate.now())) {
+        if (newUser.getBirthday() == null || newUser.getBirthday().isAfter(LocalDate.now())) {
             throw new ValidationException("Дата рождения не может быть в будущем");
         }
         log.debug("Валидация пользователя пройдена");
@@ -63,14 +64,14 @@ public class UserService {
         return user1;
     }
 
-    public List<Long> findMutualFriends(Long id, Long friendId, InMemoryUserStorage userStorage) {
+    public List<User> findMutualFriends(Long id, Long friendId, InMemoryUserStorage userStorage) {
         if (userStorage.getById(id) == null || userStorage.getById(friendId) == null)
             throw new NotFoundException("Пользователь не найден");
         Set<Long> friendsUser1 = userStorage.getById(id).getFriends();
         Set<Long> friendsUser2 = userStorage.getById(friendId).getFriends();
-        List<Long> mutualFriends = new ArrayList<>();
+        List<User> mutualFriends = new ArrayList<>();
         for (Long idFriend : friendsUser1) {
-            if (friendsUser2.contains(idFriend)) mutualFriends.add(idFriend);
+            if (friendsUser2.contains(idFriend)) mutualFriends.add(userStorage.getById(idFriend));
         }
         return mutualFriends;
     }

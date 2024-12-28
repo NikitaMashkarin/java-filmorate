@@ -23,13 +23,13 @@ public class FilmController {
     }
 
     @GetMapping("/popular")
-    public Collection<Film> findPopularFilm(@RequestParam final int count) {
+    public Collection<Film> findPopularFilm(@RequestParam(defaultValue = "10") int count) {
         return service.findPopular(count);
     }
 
     @GetMapping
     public Collection<Film> findAll() {
-        return repository.getAll();
+        return service.getAll();
     }
 
     @PostMapping
@@ -53,7 +53,7 @@ public class FilmController {
     @PutMapping("{id}/like/{userId}")
     public Film addLike(@PathVariable Long id,
                         @PathVariable Long userId) {
-        Film film = service.addLike(id, userId);
+        Film film = service.addLike(userId, id);
         log.info("Пользователь " + userId + " поставил лайк фильму " + id);
         return film;
     }
@@ -61,7 +61,7 @@ public class FilmController {
     @DeleteMapping("/{id}/like/{userId}")
     public Film deleteLike(@PathVariable Long id,
                            @PathVariable Long userId) {
-        Film film = service.deleteLike(id, userId);
+        Film film = service.deleteLike(userId, id);
         log.info("Пользователь " + userId + " удалил лайк фильму " + id);
         return film;
     }

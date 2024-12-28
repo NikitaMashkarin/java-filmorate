@@ -31,12 +31,13 @@ public class InMemoryUserStorage implements UserStorage {
         }
     }
 
-    public void save(User user) {
+    public User save(User user) {
         user.setId(getNextId());
         if (user.getName() == null) {
             user.setName(user.getLogin());
         }
         users.put(user.getId(), user);
+        return user;
     }
 
     public List<User> getAll() {
