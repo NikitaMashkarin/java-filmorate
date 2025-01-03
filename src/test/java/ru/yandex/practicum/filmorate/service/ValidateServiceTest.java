@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ValidateServiceTest {
     private final FilmService filmService = new FilmService(new InMemoryFilmStorage(), new InMemoryUserStorage());
-    private final UserService userService = new UserService(new InMemoryFilmStorage(), new InMemoryUserStorage());
+    private final UserService userService = new UserService(new InMemoryUserStorage());
 
     @Test
     public void theNameCannotBeEmpty() throws IOException {

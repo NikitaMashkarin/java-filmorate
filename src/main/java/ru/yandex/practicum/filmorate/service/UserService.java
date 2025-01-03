@@ -17,7 +17,7 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    final private InMemoryUserStorage userStorage;
+    final InMemoryUserStorage userStorage;
 
     public void validateCreate(User newUser) {
         if (newUser == null) {

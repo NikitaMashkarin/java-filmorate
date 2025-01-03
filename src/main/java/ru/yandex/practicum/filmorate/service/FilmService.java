@@ -17,8 +17,8 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class FilmService {
-    final private FilmStorage filmStorage;
-    final private UserStorage userStorage;
+    final FilmStorage filmStorage;
+    final UserStorage userStorage;
 
     public void validateCreate(Film newFilm) {
         if (newFilm.getName() == null || newFilm.getName().isBlank()) {
