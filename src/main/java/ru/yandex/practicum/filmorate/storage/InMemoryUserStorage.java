@@ -14,6 +14,7 @@ import java.util.*;
 public class InMemoryUserStorage implements UserStorage {
     private final Map<Long, User> users = new HashMap<>();
 
+    @Override
     public void update(User user) {
         if (users.containsKey(user.getId())) {
             User oldUser = users.get(user.getId());
@@ -31,6 +32,7 @@ public class InMemoryUserStorage implements UserStorage {
         }
     }
 
+    @Override
     public User save(User user) {
         user.setId(getNextId());
         if (user.getName() == null) {
@@ -40,10 +42,12 @@ public class InMemoryUserStorage implements UserStorage {
         return user;
     }
 
+    @Override
     public List<User> getAll() {
         return new ArrayList<>(users.values());
     }
 
+    @Override
     public User getById(long id) {
         return users.get(id);
     }

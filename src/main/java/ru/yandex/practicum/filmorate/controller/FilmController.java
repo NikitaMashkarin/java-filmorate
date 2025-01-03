@@ -1,26 +1,19 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 
 import java.util.Collection;
 
 @Slf4j
 @RestController
 @RequestMapping("/films")
+@RequiredArgsConstructor
 public class FilmController {
     private final FilmService service;
-    private final InMemoryFilmStorage repository;
-
-    @Autowired
-    public FilmController(FilmService service, InMemoryFilmStorage repository) {
-        this.service = service;
-        this.repository = repository;
-    }
 
     @GetMapping("/popular")
     public Collection<Film> findPopularFilm(@RequestParam(defaultValue = "10") int count) {
@@ -35,8 +28,7 @@ public class FilmController {
     @PostMapping
     public Film create(@RequestBody Film newFilm) {
         log.info("Создание фильма: {} - началось", newFilm);
-        service.validateCreate(newFilm);
-        repository.save(newFilm);
+        service.save(newFilm);
         log.info("Создание фильма закончилось");
         return newFilm;
     }
@@ -44,10 +36,10 @@ public class FilmController {
     @PutMapping
     public Film update(@RequestBody Film newFilm) {
         log.info("Изменение фильма с ID: {} - началось", newFilm.getId());
-        service.validateUpdate(newFilm);
-        repository.update(newFilm);
-        log.info("Изменение фильма с ID: {} - закончилось", repository.getById(newFilm.getId()));
-        return repository.getById(newFilm.getId());
+        service.update(newFilm);
+        Film film = service.getById(newFilm);
+        log.info("Изменение фильма с ID: {} - закончилось", film);
+        return film;
     }
 
     @PutMapping("{id}/like/{userId}")

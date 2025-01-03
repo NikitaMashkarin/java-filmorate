@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
@@ -14,14 +15,10 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class FilmService {
-    FilmStorage filmStorage;
-    UserStorage userStorage;
-
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
-        this.filmStorage = filmStorage;
-        this.userStorage = userStorage;
-    }
+    final private FilmStorage filmStorage;
+    final private UserStorage userStorage;
 
     public void validateCreate(Film newFilm) {
         if (newFilm.getName() == null || newFilm.getName().isBlank()) {
@@ -53,11 +50,25 @@ public class FilmService {
         validateCreate(newFilm);
     }
 
+    public void save(Film newFilm) {
+        validateCreate(newFilm);
+        filmStorage.save(newFilm);
+    }
+
+    public void update(Film newFilm) {
+        validateUpdate(newFilm);
+        filmStorage.update(newFilm);
+    }
+
+    public Film getById(Film film) {
+        return filmStorage.getById(film.getId());
+    }
+
     public Film addLike(Long idUser, Long idFilm) {
-        if (filmStorage.getById(idFilm) == null) throw new NotFoundException("Фильм с ID " + idFilm + " не найден");
+        Film film = filmStorage.getById(idFilm);
+        if (film == null) throw new NotFoundException("Фильм с ID " + idFilm + " не найден");
         if (userStorage.getById(idUser) == null)
             throw new NotFoundException("Пользователь с ID " + idUser + " не найден");
-        Film film = filmStorage.getById(idFilm);
         film.getLikes().add(idUser);
         return film;
     }
