@@ -1,15 +1,20 @@
-package ru.yandex.practicum.filmorate.repository;
+package ru.yandex.practicum.filmorate.storage;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
+import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.*;
 
 @Slf4j
-public class UserRepository {
+@Component
+@Getter
+public class InMemoryUserStorage implements UserStorage {
     private final Map<Long, User> users = new HashMap<>();
 
+    @Override
     public void update(User user) {
         if (users.containsKey(user.getId())) {
             User oldUser = users.get(user.getId());
@@ -23,22 +28,26 @@ public class UserRepository {
             }
         } else {
             log.warn("Фильм с id: {} - не найден", user.getId());
-            throw new ValidationException("Фильм с указанным id не найден");
+            throw new NotFoundException("Фильм с указанным id не найден");
         }
     }
 
-    public void save(User user) {
+    @Override
+    public User save(User user) {
         user.setId(getNextId());
         if (user.getName() == null) {
             user.setName(user.getLogin());
         }
         users.put(user.getId(), user);
+        return user;
     }
 
+    @Override
     public List<User> getAll() {
         return new ArrayList<>(users.values());
     }
 
+    @Override
     public User getById(long id) {
         return users.get(id);
     }

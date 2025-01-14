@@ -3,7 +3,8 @@ package ru.yandex.practicum.filmorate.service;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.repository.UserRepository;
+import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -12,7 +13,8 @@ import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ValidateServiceTest {
-    private final ValidationService validationService = new ValidationServiceImpl();
+    private final FilmService filmService = new FilmService(new InMemoryFilmStorage(), new InMemoryUserStorage());
+    private final UserService userService = new UserService(new InMemoryUserStorage());
 
     @Test
     public void theNameCannotBeEmpty() throws IOException {
@@ -21,8 +23,8 @@ class ValidateServiceTest {
         film.setDuration(Duration.ofMinutes(15));
         film.setReleaseDate(LocalDate.now());
         film.setId((long) 1);
-        assertThrows(RuntimeException.class, () -> validationService.validateCreate(film));
-        assertThrows(RuntimeException.class, () -> validationService.validateUpdate(film));
+        assertThrows(RuntimeException.class, () -> filmService.validateCreate(film));
+        assertThrows(RuntimeException.class, () -> filmService.validateUpdate(film));
     }
 
     @Test
@@ -37,8 +39,8 @@ class ValidateServiceTest {
         film.setDuration(Duration.ofMinutes(15));
         film.setReleaseDate(LocalDate.now());
         film.setId((long) 1);
-        assertThrows(RuntimeException.class, () -> validationService.validateCreate(film));
-        assertThrows(RuntimeException.class, () -> validationService.validateUpdate(film));
+        assertThrows(RuntimeException.class, () -> filmService.validateCreate(film));
+        assertThrows(RuntimeException.class, () -> filmService.validateUpdate(film));
     }
 
     @Test
@@ -49,8 +51,8 @@ class ValidateServiceTest {
         film.setDuration(Duration.ofMinutes(15));
         film.setReleaseDate(LocalDate.of(1800, 12, 21));
         film.setId((long) 1);
-        assertThrows(RuntimeException.class, () -> validationService.validateCreate(film));
-        assertThrows(RuntimeException.class, () -> validationService.validateUpdate(film));
+        assertThrows(RuntimeException.class, () -> filmService.validateCreate(film));
+        assertThrows(RuntimeException.class, () -> filmService.validateUpdate(film));
     }
 
     @Test
@@ -61,8 +63,8 @@ class ValidateServiceTest {
         film.setDuration(Duration.ofMinutes(-15));
         film.setReleaseDate(LocalDate.of(1800, 12, 21));
         film.setId((long) 1);
-        assertThrows(RuntimeException.class, () -> validationService.validateCreate(film));
-        assertThrows(RuntimeException.class, () -> validationService.validateUpdate(film));
+        assertThrows(RuntimeException.class, () -> filmService.validateCreate(film));
+        assertThrows(RuntimeException.class, () -> filmService.validateUpdate(film));
     }
 
     @Test
@@ -72,8 +74,8 @@ class ValidateServiceTest {
         user.setName("test");
         user.setLogin("test");
         user.setBirthday(LocalDate.of(2000, 1, 1));
-        assertThrows(RuntimeException.class, () -> validationService.validateCreate(user));
-        assertThrows(RuntimeException.class, () -> validationService.validateUpdate(user));
+        assertThrows(RuntimeException.class, () -> userService.validateCreate(user));
+        assertThrows(RuntimeException.class, () -> userService.validateUpdate(user));
     }
 
     @Test
@@ -84,8 +86,8 @@ class ValidateServiceTest {
         user.setName("test");
         user.setLogin("test");
         user.setBirthday(LocalDate.of(2000, 1, 1));
-        assertThrows(RuntimeException.class, () -> validationService.validateCreate(user));
-        assertThrows(RuntimeException.class, () -> validationService.validateUpdate(user));
+        assertThrows(RuntimeException.class, () -> userService.validateCreate(user));
+        assertThrows(RuntimeException.class, () -> userService.validateUpdate(user));
     }
 
     @Test
@@ -95,8 +97,8 @@ class ValidateServiceTest {
         user.setId((long) 1);
         user.setName("test");
         user.setBirthday(LocalDate.of(2000, 1, 1));
-        assertThrows(RuntimeException.class, () -> validationService.validateCreate(user));
-        assertThrows(RuntimeException.class, () -> validationService.validateUpdate(user));
+        assertThrows(RuntimeException.class, () -> userService.validateCreate(user));
+        assertThrows(RuntimeException.class, () -> userService.validateUpdate(user));
     }
 
     @Test
@@ -107,13 +109,13 @@ class ValidateServiceTest {
         user.setName("test");
         user.setLogin("test test");
         user.setBirthday(LocalDate.of(2000, 1, 1));
-        assertThrows(RuntimeException.class, () -> validationService.validateCreate(user));
-        assertThrows(RuntimeException.class, () -> validationService.validateUpdate(user));
+        assertThrows(RuntimeException.class, () -> userService.validateCreate(user));
+        assertThrows(RuntimeException.class, () -> userService.validateUpdate(user));
     }
 
     @Test
     public void theNameToDisplayMayBeEmpty() throws IOException {
-        UserRepository repository = new UserRepository();
+        InMemoryUserStorage repository = new InMemoryUserStorage();
         User user = new User();
         user.setEmail("test");
         user.setId((long) 1);
@@ -130,7 +132,7 @@ class ValidateServiceTest {
         user.setId((long) 1);
         user.setLogin("test@test");
         user.setBirthday(LocalDate.of(2025, 1, 1));
-        assertThrows(RuntimeException.class, () -> validationService.validateCreate(user));
-        assertThrows(RuntimeException.class, () -> validationService.validateUpdate(user));
+        assertThrows(RuntimeException.class, () -> userService.validateCreate(user));
+        assertThrows(RuntimeException.class, () -> userService.validateUpdate(user));
     }
 }

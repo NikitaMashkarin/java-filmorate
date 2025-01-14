@@ -1,31 +1,56 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.repository.UserRepository;
-import ru.yandex.practicum.filmorate.service.ValidationService;
-import ru.yandex.practicum.filmorate.service.ValidationServiceImpl;
+import ru.yandex.practicum.filmorate.service.UserService;
 
-import java.util.Collection;
+import java.util.*;
 
 @Slf4j
 @RestController
 @RequestMapping("/users")
+@RequiredArgsConstructor
 public class UserController {
-    private final ValidationService validate = new ValidationServiceImpl();
-    private final UserRepository repository = new UserRepository();
+    private final UserService service;
+
+    @GetMapping("/{id}/friends")
+    public Collection<User> findFriendsById(@PathVariable Long id) {
+        if (service.getUsers().containsKey(id)) {
+            Collection<User> friendsUser = new HashSet<>();
+            for (Long userId : service.getById(id).getFriends()) {
+                friendsUser.add(service.getById(userId));
+            }
+            return friendsUser;
+        }
+        throw new NotFoundException("Пользователя с id " + id + " не существует");
+    }
+
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public List<User> findMutualFriends(@PathVariable Long id,
+                                        @PathVariable Long otherId) {
+        log.info("Общие друзья пользователя " + id + " и " + otherId);
+        return service.findMutualFriends(id, otherId);
+    }
+
+
+    @GetMapping("/{id}")
+    public User findUserById(@PathVariable Long id) {
+        if (service.getUsers().containsKey(id)) return service.getById(id);
+        throw new NotFoundException("Пользователя с id " + id + " не существует");
+    }
 
     @GetMapping
     public Collection<User> findAll() {
-        return repository.getAll();
+        return service.getAll();
     }
 
     @PostMapping
     public User create(@RequestBody User newUser) {
         log.info("Создание пользователя: {} - началось", newUser);
-        validate.validateCreate(newUser);
-        repository.save(newUser);
+        service.save(newUser);
         log.info("Создание пользователя закончилось");
         return newUser;
     }
@@ -33,9 +58,28 @@ public class UserController {
     @PutMapping
     public User update(@RequestBody User newUser) {
         log.info("Изменение пользователя: {} - началось", newUser);
-        validate.validateUpdate(newUser);
-        repository.update(newUser);
+        service.update(newUser);
         log.info("Изменение пользователя закончилось");
-        return repository.getById(newUser.getId());
+        return service.getById(newUser.getId());
     }
+
+    @PutMapping("/{id}/friends/{friendId}")
+    public User addFriend(@PathVariable Long id,
+                          @PathVariable Long friendId) {
+        log.info("Пользователь " + id + " добавляет пользователя " + friendId + " в друзья");
+        User user = service.addFriend(id, friendId);
+        log.info("Пользователи теперь друзья");
+        return user;
+    }
+
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public User deleteFriend(@PathVariable Long id,
+                             @PathVariable Long friendId) {
+        log.info("Пользователь " + id + " удаляет пользователя " + friendId + " из друзей");
+        User user = service.deleteFriend(id, friendId);
+        log.info("Пользователи теперь не друзья");
+        return user;
+    }
+
+
 }
