@@ -3,10 +3,10 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dal.UserDbStorage;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -15,7 +15,7 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    final InMemoryUserStorage userStorage;
+    final UserDbStorage userStorage;
 
     public void validateCreate(User newUser) {
         if (newUser == null) {
@@ -40,21 +40,27 @@ public class UserService {
         validateCreate(newUser);
     }
 
-    public Map<Long, User> getUsers() {
-        return userStorage.getUsers();
+    public List<Long> getFriends(Long id){
+        if(userStorage.findById(id).isEmpty()) throw new NotFoundException("Пользователя с id " + id + " не существует");
+        return userStorage.findAllFriends(id);
+    }
+    public List<User> getUsers() {
+        return userStorage.findAll();
     }
 
     public User getById(long id) {
-        return userStorage.getById(id);
+        Optional<User> user = userStorage.findById(id);
+        if(user.isEmpty()) throw new NotFoundException("Пользователь с id = " + id + " не найден");
+        return  user.get();
     }
 
     public Collection<User> getAll() {
-        return userStorage.getAll();
+        return userStorage.findAll();
     }
 
     public void save(User newUser) {
         validateCreate(newUser);
-        userStorage.save(newUser);
+        userStorage.add(newUser);
     }
 
     public void update(User newUser) {
@@ -64,33 +70,32 @@ public class UserService {
 
     public User addFriend(Long id, Long friendId) {
         if (id.equals(friendId)) throw new ValidationException("Пользователь не может добавить сам себя в друзья");
-        User user1 = userStorage.getById(id);
-        User user2 = userStorage.getById(friendId);
-        if (user2 == null || user1 == null) throw new NotFoundException("Пользователь не найден");
-        user1.getFriends().add(friendId);
-        user2.getFriends().add(id);
-        return user1;
+        Optional<User> user1 = userStorage.findById(id);
+        Optional<User> user2 = userStorage.findById(friendId);
+        if (user1.isEmpty() || user2.isEmpty()) throw new NotFoundException("Пользователь не найден");
+        userStorage.addRequestsFriendship(id, friendId);
+        return user1.get();
     }
 
     public User deleteFriend(Long id, Long friendId) {
-        User user1 = userStorage.getById(id);
-        User user2 = userStorage.getById(friendId);
-        if (user2 == null || user1 == null) throw new NotFoundException("Пользователь не найден");
-        user1.getFriends().remove(friendId);
-        user2.getFriends().remove(id);
-        return user1;
+        if (id.equals(friendId)) throw new ValidationException("Пользователь не может удалить сам себя из друзья");
+        Optional<User> user1 = userStorage.findById(id);
+        Optional<User> user2 = userStorage.findById(friendId);
+        if (user1.isEmpty() || user2.isEmpty()) throw new NotFoundException("Пользователь не найден");
+        userStorage.deleteFriends(id, friendId);
+        return user1.get();
     }
 
     public List<User> findMutualFriends(Long id, Long friendId) {
-        if (userStorage.getById(id) == null || userStorage.getById(friendId) == null)
-            throw new NotFoundException("Пользователь не найден");
-        Set<Long> friendsUser1 = userStorage.getById(id).getFriends();
-        Set<Long> friendsUser2 = userStorage.getById(friendId).getFriends();
-        List<User> mutualFriends = new ArrayList<>();
-        for (Long idFriend : friendsUser1) {
-            if (friendsUser2.contains(idFriend)) mutualFriends.add(userStorage.getById(idFriend));
+        getById(id);
+        getById(friendId);
+        List<User> commonFriend = new ArrayList<>();
+        Set<Long> common = new HashSet<>(userStorage.findAllFriends(id));
+        common.retainAll(userStorage.findAllFriends(friendId));
+        for (Long idFriendUser : common) {
+            commonFriend.add(getById(idFriendUser));
         }
-        return mutualFriends;
+        return commonFriend;
     }
 
     private boolean isCharUniqueInString(String str, String ch) {

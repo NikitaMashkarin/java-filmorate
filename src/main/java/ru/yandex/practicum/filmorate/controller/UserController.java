@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
@@ -17,15 +16,8 @@ public class UserController {
     private final UserService service;
 
     @GetMapping("/{id}/friends")
-    public Collection<User> findFriendsById(@PathVariable Long id) {
-        if (service.getUsers().containsKey(id)) {
-            Collection<User> friendsUser = new HashSet<>();
-            for (Long userId : service.getById(id).getFriends()) {
-                friendsUser.add(service.getById(userId));
-            }
-            return friendsUser;
-        }
-        throw new NotFoundException("Пользователя с id " + id + " не существует");
+    public Collection<Long> findFriendsById(@PathVariable Long id) {
+        return service.getFriends(id);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
@@ -38,8 +30,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public User findUserById(@PathVariable Long id) {
-        if (service.getUsers().containsKey(id)) return service.getById(id);
-        throw new NotFoundException("Пользователя с id " + id + " не существует");
+        return service.getById(id);
     }
 
     @GetMapping

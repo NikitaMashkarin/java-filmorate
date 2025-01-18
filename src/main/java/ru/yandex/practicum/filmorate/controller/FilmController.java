@@ -37,7 +37,7 @@ public class FilmController {
     public Film update(@RequestBody Film newFilm) {
         log.info("Изменение фильма с ID: {} - началось", newFilm.getId());
         service.update(newFilm);
-        Film film = service.getById(newFilm);
+        Film film = service.getById(newFilm.getId());
         log.info("Изменение фильма с ID: {} - закончилось", film);
         return film;
     }
