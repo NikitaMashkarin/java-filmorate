@@ -11,7 +11,6 @@ import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 import java.util.LinkedHashSet;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -31,7 +30,7 @@ public class Film {
 
     Mpa mpa;
 
-    Set<Genre> genres;
+    LinkedHashSet<Genre> genres;
 
     @NotNull(groups = {Create.class})
     @ReleaseDate(groups = {Create.class})
