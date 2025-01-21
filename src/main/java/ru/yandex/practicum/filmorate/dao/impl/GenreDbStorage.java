@@ -59,7 +59,6 @@ public class GenreDbStorage implements GenreStorage {
     public void setFilmGenres(Film film, List<Long> genreIds) {
         MapSqlParameterSource params = new MapSqlParameterSource();
         for (Long genreId : genreIds) {
-            //try {
             Genre curGenre = getGenre(genreId).get();
             params.addValue("film_id", film.getId());
             params.addValue("genre_id", genreId);
