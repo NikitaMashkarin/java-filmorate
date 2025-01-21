@@ -1,5 +1,7 @@
 ![Database](assets/FilmorateBD.PNG)
-https://yapx.ru/album/YW1J7
+
+https://yapx.ru/album/YXar0
+
 Примеры запросов:
 1) Запрос для получения фильма c id = 1 : 
 SELECT f.* 
@@ -10,7 +12,7 @@ WHERE film_id = 1;
  From Friends
  WHERE user_id = 1;
 3) Запрос для получения жанров фильма c id = 1:
-SELECT g.genre
+SELECT g.name
 FROM Genre
-JOIN Genre_film gf ON g.genre_id = gf.genre_id
+JOIN film_genre gf ON g.id = gf.genre_id
 WHERE film_id = 1;

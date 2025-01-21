@@ -9,10 +9,10 @@ import ru.yandex.practicum.filmorate.Update;
 
 @Data
 @EqualsAndHashCode(of = "id")
-public class Genre {
+public class Mpa {
 
     @NotNull(groups = {Create.class, Update.class})
-    private long id;
+    private int id;
     @NotBlank(groups = {Create.class, Update.class})
     private String name;
 
