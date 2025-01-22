@@ -30,12 +30,6 @@ public class UserService {
     }
 
     public User createUser(User user) {
-        if (user.getEmail() == null || user.getEmail().isEmpty()) {
-            throw new javax.validation.ValidationException("Email должен быть указан");
-        }
-        if (user.getLogin() == null || user.getLogin().isEmpty()) {
-            throw new javax.validation.ValidationException("Логин должен быть указан");
-        }
         Optional<User> alreadyExistUser = userDbStorage.findUserByEmail(user.getEmail());
         if (alreadyExistUser.isPresent()) {
             throw new ValidationException("Данный email уже используется");

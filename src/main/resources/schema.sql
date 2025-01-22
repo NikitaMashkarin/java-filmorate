@@ -7,17 +7,12 @@ CREATE TABLE IF NOT EXISTS users
    birthday DATE
 );
 
-CREATE TABLE IF NOT EXISTS friends
-(
-   user_id BIGINT NOT NULL,
-   friend_id BIGINT NOT NULL,
-   PRIMARY KEY(user_id, friend_id)
+CREATE TABLE IF NOT EXISTS friends (
+    user_id INTEGER NOT NULL,
+    friend_id INTEGER NOT NULL,
+    CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id),
+    CONSTRAINT fk_friend FOREIGN KEY (friend_id) REFERENCES users(id)
 );
-
-ALTER TABLE friends ADD IF NOT EXISTS FOREIGN KEY (user_id) REFERENCES users(id);
-
-ALTER TABLE friends ADD IF NOT EXISTS FOREIGN KEY (friend_id) REFERENCES users(id);
-
 
 CREATE TABLE IF NOT EXISTS mpa
 (
@@ -32,21 +27,17 @@ CREATE TABLE IF NOT EXISTS films
    description VARCHAR(255) NOT NULL,
    releaseDate DATE,
    duration INTEGER DEFAULT 0,
-   mpa_id INTEGER
+   mpa_id INTEGER,
+   CONSTRAINT fk_mpa FOREIGN KEY (mpa_id) REFERENCES mpa(id)
 );
-
-ALTER TABLE films ADD IF NOT EXISTS FOREIGN KEY (mpa_id) REFERENCES mpa(id);
 
 CREATE TABLE IF NOT EXISTS film_likes
 (
    user_id INTEGER NOT NULL,
    film_id INTEGER NOT NULL,
-   PRIMARY KEY(user_id, film_id)
+   CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES users(id),
+   CONSTRAINT fk_film_id FOREIGN KEY (film_id) REFERENCES films(id)
 );
-
-ALTER TABLE film_likes ADD IF NOT EXISTS FOREIGN KEY (user_id) REFERENCES users(id);
-
-ALTER TABLE film_likes ADD IF NOT EXISTS FOREIGN KEY (film_id) REFERENCES films(id);
 
 CREATE TABLE IF NOT EXISTS genre
 (
@@ -58,9 +49,6 @@ CREATE TABLE IF NOT EXISTS film_genre
 (
    film_id INTEGER NOT NULL,
    genre_id INTEGER NOT NULL,
-   PRIMARY KEY(genre_id, film_id)
+   CONSTRAINT fk_genreId FOREIGN KEY (genre_id) REFERENCES genre(id),
+   CONSTRAINT fk_filmId FOREIGN KEY (film_id) REFERENCES films(id)
 );
-
-ALTER TABLE film_genre ADD IF NOT EXISTS FOREIGN KEY (genre_id) REFERENCES genre(id);
-
-ALTER TABLE film_genre ADD IF NOT EXISTS FOREIGN KEY (film_id) REFERENCES films(id);

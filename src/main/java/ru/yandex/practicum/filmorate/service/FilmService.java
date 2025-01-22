@@ -65,9 +65,6 @@ public class FilmService {
 
 
     public Film createFilm(Film film) {
-        if (film.getName() == null || film.getName().isEmpty()) {
-            throw new ValidationException("Название фильма должен быть указано");
-        }
         if (film.getMpa() != null) {
             int mpaId = film.getMpa().getId();
             Mpa mpa = mpaDbStorage.findMpaById(mpaId)

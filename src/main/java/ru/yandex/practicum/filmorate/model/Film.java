@@ -28,9 +28,9 @@ public class Film {
     @Size(max = 200, groups = {Create.class, Update.class})
     private String description;
 
-    Mpa mpa;
+    private Mpa mpa;
 
-    LinkedHashSet<Genre> genres;
+    private LinkedHashSet<Genre> genres;
 
     @NotNull(groups = {Create.class})
     @ReleaseDate(groups = {Create.class})
