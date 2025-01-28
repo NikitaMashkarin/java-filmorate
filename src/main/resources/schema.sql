@@ -1,0 +1,54 @@
+CREATE TABLE IF NOT EXISTS users
+(
+   id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+   login VARCHAR(255) NOT NULL,
+   email VARCHAR(255) NOT NULL,
+   name VARCHAR(255),
+   birthday DATE
+);
+
+CREATE TABLE IF NOT EXISTS friends (
+    user_id INTEGER NOT NULL,
+    friend_id INTEGER NOT NULL,
+    CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id),
+    CONSTRAINT fk_friend FOREIGN KEY (friend_id) REFERENCES users(id)
+);
+
+CREATE TABLE IF NOT EXISTS mpa
+(
+   id INTEGER NOT NULL PRIMARY KEY,
+   name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS films
+(
+   id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+   name VARCHAR(255) NOT NULL,
+   description VARCHAR(255) NOT NULL,
+   releaseDate DATE,
+   duration INTEGER DEFAULT 0,
+   mpa_id INTEGER,
+   CONSTRAINT fk_mpa FOREIGN KEY (mpa_id) REFERENCES mpa(id)
+);
+
+CREATE TABLE IF NOT EXISTS film_likes
+(
+   user_id INTEGER NOT NULL,
+   film_id INTEGER NOT NULL,
+   CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES users(id),
+   CONSTRAINT fk_film_id FOREIGN KEY (film_id) REFERENCES films(id)
+);
+
+CREATE TABLE IF NOT EXISTS genre
+(
+   id INTEGER NOT NULL PRIMARY KEY,
+   name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS film_genre
+(
+   film_id INTEGER NOT NULL,
+   genre_id INTEGER NOT NULL,
+   CONSTRAINT fk_genreId FOREIGN KEY (genre_id) REFERENCES genre(id),
+   CONSTRAINT fk_filmId FOREIGN KEY (film_id) REFERENCES films(id)
+);

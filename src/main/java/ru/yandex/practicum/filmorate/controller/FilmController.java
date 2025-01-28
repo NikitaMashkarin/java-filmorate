@@ -1,60 +1,80 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.Create;
+import ru.yandex.practicum.filmorate.Update;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import java.util.Collection;
 
-@Slf4j
 @RestController
 @RequestMapping("/films")
+@Slf4j
+@Validated
 @RequiredArgsConstructor
 public class FilmController {
-    private final FilmService service;
-
-    @GetMapping("/popular")
-    public Collection<Film> findPopularFilm(@RequestParam(defaultValue = "10") int count) {
-        return service.findPopular(count);
-    }
+    private final FilmService filmService;
 
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public Collection<Film> findAll() {
-        return service.getAll();
+        Collection<Film> allFilms = filmService.getFilms();
+        log.info("Отправлен ответ Get /films с телом: {}", allFilms);
+        return allFilms;
+    }
+
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Film getUser(@PathVariable("id") long id) {
+        Film curFilm = filmService.getFilmById(id);
+        log.info("Отправлен ответ Get /films/{} с телом: {}", id, curFilm);
+        return curFilm;
     }
 
     @PostMapping
-    public Film create(@RequestBody Film newFilm) {
-        log.info("Создание фильма: {} - началось", newFilm);
-        service.save(newFilm);
-        log.info("Создание фильма закончилось");
-        return newFilm;
+    @ResponseStatus(HttpStatus.CREATED)
+    public Film create(@Validated(Create.class) @RequestBody final Film film) {
+        log.info("Пришел Post запрос /films с телом: {}", film);
+        Film curFilm = filmService.createFilm(film);
+        log.info("Отправлен ответ Post /films с телом: {}", curFilm);
+        return curFilm;
     }
+
 
     @PutMapping
-    public Film update(@RequestBody Film newFilm) {
-        log.info("Изменение фильма с ID: {} - началось", newFilm.getId());
-        service.update(newFilm);
-        Film film = service.getById(newFilm);
-        log.info("Изменение фильма с ID: {} - закончилось", film);
-        return film;
+    @ResponseStatus(HttpStatus.OK)
+    public Film update(@Validated(Update.class) @RequestBody final Film film) {
+        log.info("Пришел Put запрос /films с телом: {}", film);
+        Film curFilm = filmService.updateFilm(film);
+        log.info("Отправлен ответ Put /films с телом: {}", curFilm);
+        return curFilm;
     }
 
-    @PutMapping("{id}/like/{userId}")
-    public Film addLike(@PathVariable Long id,
-                        @PathVariable Long userId) {
-        Film film = service.addLike(userId, id);
-        log.info("Пользователь " + userId + " поставил лайк фильму " + id);
-        return film;
+    @PutMapping("/{id}/like/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void setLike(@PathVariable("id") long id, @PathVariable("userId") long userId) {
+        filmService.addLikeToFilm(id, userId);
+        log.info("Отправлен ответ Put /films/{}/like/{}", id, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public Film deleteLike(@PathVariable Long id,
-                           @PathVariable Long userId) {
-        Film film = service.deleteLike(userId, id);
-        log.info("Пользователь " + userId + " удалил лайк фильму " + id);
-        return film;
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteLike(@PathVariable("id") long id, @PathVariable("userId") long userId) {
+        filmService.deleteLikeFromFilm(id, userId);
+        log.info("Отправлен ответ Delete /films/{}/like/{}", id, userId);
+    }
+
+    @GetMapping("/popular")
+    @ResponseStatus(HttpStatus.OK)
+    public Collection<Film> getPopularFilms(@Positive @RequestParam(defaultValue = "10") Integer count) {
+        Collection<Film> popularFilms = filmService.getPopularFilms(count);
+        log.info("Отправлен ответ Get /films/popular?count={} с телом: {}", count, popularFilms);
+        return popularFilms;
     }
 }

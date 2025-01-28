@@ -1,21 +1,37 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.*;
+import lombok.*;
+import ru.yandex.practicum.filmorate.Create;
+import ru.yandex.practicum.filmorate.Update;
 
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
-@Data
+@AllArgsConstructor
+@ToString
+@Builder
+@EqualsAndHashCode(of = "id")
 public class User {
-    private Long id;
+
+    @NotNull(groups = {Update.class})
+    private long id;
+    @Email(groups = {Create.class, Update.class})
+    @NotBlank(groups = {Create.class})
     private String email;
+
+    @NotBlank(groups = {Create.class})
+    @Pattern(regexp = "^[a-zA-Z0-9-_.]{3,}$", groups = {Create.class, Update.class})
     private String login;
+
     private String name;
+
+    @Past(groups = {Create.class, Update.class})
     private LocalDate birthday;
-    private final Set<Long> friends = new HashSet<>();
+
+    final Set<Long> friends = new HashSet<>();
 }
